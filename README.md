@@ -16,7 +16,7 @@ Dokumentationsstand: **20. September 2026**. Die Beschreibung basiert auf dem zu
 - Neue Fragen und neue Antwortformulierungen verarbeiten, ohne Fragen- oder Antworten-Whitelist und ohne manuelle Freigabe jeder Antwort.
 - Passende Wissensquellen suchen und jede freigegebene Sachbehauptung mit Belegen verknüpfen.
 - Kurze Anschlussfragen anhand eines begrenzten, datenschutzgeprüften Gesprächskontexts verstehen.
-- Bei Unklarheit gezielt nachfragen und bei fehlenden Belegen oder technischen Problemen an das Team übergeben.
+- Bei Unklarheit gezielt nachfragen. Fehlen ausreichende Belege, nennt der Bot diese Grenze und bleibt für weitere OSEG-Fragen erreichbar; technische Probleme können eine Team-Übergabe auslösen.
 - Auf „Mensch“ eine Übergabe an das OSEG-Team auslösen.
 
 Die bestehende Installation bindet den Bot in alle derzeit konfigurierten Chatwoot-Postfächer ein. Die Verarbeitung unterstützt Text; Anhänge werden nicht als Wissenseingabe ausgewertet.

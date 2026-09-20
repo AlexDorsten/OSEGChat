@@ -61,11 +61,15 @@ Für Anschlussfragen kann der Bot den begrenzten Kontext desselben Gesprächs ve
 
 Die Klassifizierung unterscheidet `allow`, `personal`, `outside`, `unsafe` und `clarify`. Ein Sitz auf Stadt-, Regions- oder Landesebene ist eine sachliche Organisationsangabe. Das erlaubt keine Auskunft über persönliche Wohnadressen, Straßen mit Hausnummern oder Kontakte.
 
+Eine harmlose fachfremde Anfrage (`outside`) erhält einen Themenhinweis; das Gespräch bleibt beim Bot, damit nachfolgende OSEG-Fragen beantwortet werden können. Personenanfragen und Sicherheitsfälle führen weiterhin zu einer ausdrücklich angekündigten Übergabe. Eine Themenablehnung allein darf das Gespräch nicht dauerhaft für die KI sperren.
+
 ### 3. Wissenssuche und Bereinigung
 
 Der Bot liest das aktuelle Quellenverzeichnis und berücksichtigt ausschließlich Quellen, deren Modellverarbeitung freigegeben ist. Ein Modellaufruf wählt passende Primärseiten und Suchbegriffe. Die Suche nutzt Volltextabfragen sowie eine an Quellenart, Titel und Suchtreffern orientierte Rangfolge; dieser Antwortweg setzt keine Vektordatenbank voraus.
 
 Anschließend werden passende Dokumente und Textpassagen frisch abgerufen. Offizielle Vereinsseiten haben für Vereinsfragen Vorrang vor historischen Diskussionen. Bei Bedarf ist ein begrenzter erweiterter Suchlauf möglich.
+
+Wird ein Suchplan vom Modell unvollständig ausgegeben, wird er verworfen und innerhalb des bestehenden Zeitbudgets einmal mit einem größeren Ausgabelimit neu erzeugt. Erst ein vollständiger Plan mit gültigem Schema, erlaubten Quellen und datenschutzgeprüften Suchbegriffen darf Suchabfragen auslösen. Eine erneut unvollständige Ausgabe führt zum sicheren Abbruch.
 
 Vor der Antwortgenerierung werden Titel, Metadaten und ausgewählte Auszüge bereinigt. Der Bot entfernt erkannte Personennamen, Kontaktangaben, Adressen, Geheimnismuster, Autorenzeilen und Quell-URLs. Nicht die vollständigen Rohdokumente, sondern ausgewählte bereinigte Auszüge dienen dem Modell als Belege.
 
@@ -88,7 +92,7 @@ Ein separater Modellaufruf prüft die verbleibende Antwort. Für eine Freigabe m
 
 Zusätzliche Programmregeln prüfen unter anderem fehlende Definitionen und unbelegte Gegenwartsbehauptungen. Ein unzureichender Entwurf kann innerhalb eines begrenzten Zeitbudgets neu formuliert werden. Ein erneuter Abruf kontrolliert vor der Freigabe Quellenberechtigung, Revision und SHA-256-Inhalts-Hash. Änderungen während der Bearbeitung verhindern die Ausgabe auf Basis des überholten Quellenstands.
 
-Ungültige Ergebnisse, fehlende Belege oder fehlgeschlagene Prüfungen führen zu einer sicheren Ausweichantwort beziehungsweise Übergabe. Unsichere Antwortentwürfe werden nicht als Zwischenstand veröffentlicht.
+Fehlt nach den begrenzten Such- und Prüfversuchen eine ausreichend belegte Antwort (`no_evidence`), erklärt der Bot diese Grenze, bietet mit „Mensch“ die Team-Übergabe an und bleibt für weitere OSEG-Fragen erreichbar. Die fehlende Freigabe eines einzelnen Entwurfs beendet damit nicht das gesamte KI-Gespräch. Ungültige Ergebnisse oder technische Fehler können weiterhin eine ausdrücklich angekündigte Übergabe auslösen. Unsichere Antwortentwürfe werden nicht als Zwischenstand veröffentlicht.
 
 ### 5. Quellenanzeige und Übergabe
 
@@ -96,7 +100,7 @@ Antworten verweisen auf geprüfte Zusammenfassungen unter der öffentlichen Quel
 
 Beim Abruf werden Datenschutz und Quellenstand erneut geprüft. Ein Beleg läuft spätestens nach sieben Tagen ab; eine Quellenänderung oder der Entzug der Verarbeitungsfreigabe macht ihn früher ungültig. Für reine Navigationsfragen kann der Bot stattdessen eine exakt hinterlegte offizielle OSEG-Startseite nennen. Diese begrenzte URL-Auswahl ist keine Fragen-Whitelist.
 
-„Mensch“ löst eine Team-Übergabe aus. Dabei wird der Bot-Kontext gelöscht und das Gespräch für die menschliche Bearbeitung geöffnet. Ein bereits übergebenes Gespräch wird nicht automatisch wieder vom Bot übernommen. Die Übergabe bedeutet keine Zusage einer sofortigen menschlichen Antwort.
+Der eigenständige Befehl „Mensch“ und erkennbare Wünsche wie „Ich möchte mit einem Menschen sprechen“ lösen eine Team-Übergabe aus. Die bloße Erwähnung von „Mensch“, „Menschen“ oder „Mitarbeiter“ innerhalb einer Sachfrage genügt dafür nicht. Bei einer Übergabe wird der Bot-Kontext gelöscht und das Gespräch für die menschliche Bearbeitung geöffnet. Ein bereits übergebenes Gespräch wird nicht automatisch wieder vom Bot übernommen. Die Übergabe bedeutet keine Zusage einer sofortigen menschlichen Antwort.
 
 ## Die acht Systemprompts
 
@@ -166,14 +170,18 @@ Die Bot-Route für Gesundheitsdaten und aggregierte Kennzahlen bleibt intern. De
 
 Bei Änderungen sind insbesondere folgende Prüfungen erforderlich:
 
-1. Frageklassifizierung, Gesprächsbezug, Freigabeschema, Übergabe und Verhalten bei unterbrochenem Versand prüfen.
+1. Frageklassifizierung, Gesprächsbezug, Freigabeschema, Übergabe und Verhalten bei unterbrochenem Versand prüfen. Nach einer Themenablehnung oder einer Antwort ohne ausreichende Belege muss eine neue OSEG-Frage im selben Gespräch weiterhin verarbeitet werden; nach einem ausdrücklichen Übergabewunsch darf der Bot nicht weiterantworten.
 2. Synthetische Fälle für Personenfragen, sensible Quellenauszüge, gemischte Anfragen und eingebettete Umgehungsanweisungen verwenden.
 3. Quellenwechsel, fehlende Belege, historische Angaben und ausgefallene Komponenten testen.
 4. Den vollständigen Weg über ein klar gekennzeichnetes synthetisches Chatwoot-Gespräch überprüfen; keine realen Gespräche als öffentliche Testdaten verwenden.
 5. Nach Widget-Änderungen Smartphone und Tablet mit geöffneter Tastatur prüfen. Nach Chatwoot-Upgrades das aktuelle Original-SDK und die Widget-Vorlage erneut abgleichen und die Ergänzungen daraus neu erzeugen.
 6. Bestehende Browser-Caches berücksichtigen. Frisch ausgelieferte Skripte verwenden `no-cache`; eine versionierte Einbettungs-URL hilft bei alten zwischengespeicherten Kopien.
 
-Die zuletzt dokumentierte Prüfung umfasste 59 Python-Tests, sechs gezielte Fälle mit dem realen lokalen Modell, elf Prüfungen zur mobilen Anpassung, eine zusätzliche Widget-Regression sowie einen synthetischen Chatwoot-Test. Die mobile Darstellung wurde im iPad-Simulator in Hoch- und Querformat geprüft. Diese Ergebnisse beziehen sich auf den damaligen Betriebsstand; dieses Repository führt die Anwendungstests derzeit nicht selbst aus.
+Die Korrektur der Gesprächsübergabe vom 20. September 2026 wurde mit 68 erfolgreichen Python-Tests in der produktiven Python-/spaCy-Laufzeit geprüft; kein Test wurde übersprungen. Acht gekennzeichnete synthetische Chatwoot-Gespräche deckten beide Postfächer ab. Geprüft wurden unter anderem eine OSEG-Frage nach einer Themenablehnung, eine Anschlussfrage nach fehlenden Belegen und das Schweigen des Bots nach einer ausdrücklichen menschlichen Übernahme. Alle dabei überprüften Bot-Ausgaben bestanden die angewendete Datenschutzprüfung.
+
+Die lokalen Modell- und Live-Tests umfassten außerdem Haushaltsgeräte, Förderungen, Software/Hardware, OSE-Geschichte und ZAC. Der Software-/Hardware-Vergleich wurde in einem Live-Durchlauf mangels ausreichender Belegfreigabe zurückgewiesen und in einem späteren Durchlauf beantwortet. Die Korrektur verhindert, dass eine solche Ausweichantwort die weitere KI-Unterhaltung sperrt; sie beweist keine verlässliche fachliche Antwort auf jede Formulierung.
+
+Frühere Prüfungen umfassten zusätzlich elf Fälle zur mobilen Anpassung, eine Widget-Regression und die Darstellung im iPad-Simulator in Hoch- und Querformat. Die aktuelle Änderung betrifft die Bot-Verarbeitung; diese UI-Prüfungen wurden dabei nicht erneut durchgeführt. Dieses Dokumentationsrepository führt die Anwendungstests derzeit nicht selbst aus.
 
 ## Bewusste Architekturentscheidungen
 
@@ -182,4 +190,4 @@ Die zuletzt dokumentierte Prüfung umfasste 59 Python-Tests, sechs gezielte Fäl
 - **Mehrere Schutzschichten:** Programmregeln, statistische Namenserkennung und Modellprüfungen ergänzen sich.
 - **Begrenzter Kontext:** Anschlussfragen werden unterstützt, ohne ganze Gesprächshistorien oder fremde Gespräche als Modellwissen zu laden.
 - **Geprüfte Zusammenfassungen als Belege:** Besucher erhalten sichere Sachzusammenfassungen. Die unmittelbare Einsicht in das ungefilterte Original über diese Belegseite entfällt bewusst.
-- **Konservative Ausgabe bei Unsicherheit:** Eine fehlende Freigabe führt zu Klärung oder Übergabe statt zur Veröffentlichung des Entwurfs.
+- **Konservative Ausgabe bei Unsicherheit:** Eine fehlende Freigabe führt zu Rückfrage, begründeter Ausweichantwort oder Übergabe. Ein verworfener Entwurf wird nicht veröffentlicht; harmlose Themenabweichungen und Wissenslücken lassen das Gespräch für weitere OSEG-Fragen offen.
