@@ -56,3 +56,9 @@ Betriebliche Voraussetzungen und Prüfungen bei Änderungen stehen in der [Archi
 ## Rückmeldungen
 
 Fehlerberichte sind über die [GitHub-Issues](https://github.com/AlexDorsten/OSEGChat/issues) möglich. Hilfreich sind eine nachgestellte Frage, das erwartete Verhalten und eine bereinigte Beschreibung des beobachteten Fehlers. Bitte keine echten Gesprächsverläufe, Namen, Kontaktangaben oder Zugangsdaten veröffentlichen.
+
+## Lizenz
+
+Die Inhalte dieses Repositorys stehen unter der [Creative Commons Namensnennung 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/deed.de). Den vollständigen Lizenztext findest du in [LICENSE](LICENSE).
+
+Du darfst die Inhalte teilen und bearbeiten, auch kommerziell. Dabei musst du angemessene Urheber- und Quellenangaben machen, einen Link zur Lizenz angeben und vorgenommene Änderungen kennzeichnen.
