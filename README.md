@@ -6,7 +6,7 @@ Der Assistent erklärt freundlich in Du-Form und mit der Sachkenntnis eines gut 
 
 ## Inhalt dieses Repositorys
 
-Dieses Repository dokumentiert die bestehende Integration. Es enthält derzeit die README und eine [Architekturbeschreibung](ARCHITECTURE.md). Anwendungscode, Installationspakete und produktive Konfiguration sind hier noch nicht enthalten; ein Klonen dieses Repositorys ergibt deshalb noch keine ausführbare Installation.
+Dieses Repository dokumentiert die bestehende Integration. Es enthält diese README, eine [Architekturbeschreibung](ARCHITECTURE.md) sowie einen [kurzen Datenschutzentwurf](docs/datenschutzerklaerung-entwurf.md) mit [extrahiertem Bestand](docs/datenschutzerklaerung-bestand-2026-09-21.md) und [offenen Prüfpunkten](docs/datenschutzerklaerung-pruefpunkte.md). Der Datenschutzentwurf wird in [Issue #2](https://github.com/AlexDorsten/OSEGChat/issues/2) diskutiert und ist noch nicht zur Website-Veröffentlichung freigegeben. Anwendungscode, Installationspakete und produktive Konfiguration sind hier noch nicht enthalten; ein Klonen dieses Repositorys ergibt deshalb noch keine ausführbare Installation.
 
 Dokumentationsstand: **20. September 2026**. Die Beschreibung basiert auf dem zu diesem Zeitpunkt geprüften Betriebsstand.
 
